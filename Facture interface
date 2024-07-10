@@ -1,0 +1,86 @@
+from tkinter import *
+from tkinter import ttk
+from PIL import ImageTk,Image
+import openpyxl
+from openpyxl import workbook , load_workbook
+import sys
+
+from personalInfo import *
+        
+
+###
+root=Tk()
+root.title("Facture")
+root.geometry("800x500")
+
+#LOGO
+LABEL=Label(root,text="REGIE AUTONOME INTERCOMMUNALE\n DE DISTRIBUTION D'EAU ET D'ELECTRICITE DE FES\n\n\n\n",fg="blue")
+logo=ImageTk.PhotoImage(Image.open('RD\RADEEF2.jpg')) 
+myLabel=Label(image=logo)
+myLabel.place(x=500,y=0)
+LABEL.config(font=("Courier", 12))
+LABEL.place(x=20,y=50)
+
+
+#Tableau
+book = load_workbook('RD\PEsonInfo.xlsx')
+sheet=book.worksheets[1]
+feuil=book.worksheets[0]
+
+#FName = str(feuil['A1'].value).strip()
+#NCN = str(feuil['B1'].value).strip()
+#EM = str(feuil['C1'].value).strip()
+#TL = str(feuil['D1'].value).strip()
+
+# Retrieve passed arguments
+if len(sys.argv) > 1:
+    FName = sys.argv[1]
+    comFName = sys.argv[2]
+    NCN = sys.argv[3]
+    comNCN = sys.argv[4]
+    EM = sys.argv[5]
+    comEM = sys.argv[6]
+    TL = sys.argv[7]
+    comTL = sys.argv[8]
+
+    # Print or use the received values
+    print(f"FName: {FName}, comFName: {comFName}")
+    print(f"NCN: {NCN}, comNCN: {comNCN}")
+    print(f"EM: {EM}, comEM: {comEM}")
+    print(f"TL: {TL}, comTL: {comTL}")
+else:
+    print("No arguments passed.")
+
+#Information
+if (comNCN == NCN):
+    label1=Label(root,text=f"Nom complet: {comFName}")
+    label1.place(x=10,y=150)
+    label2=Label(root,text=f"Numero de contrat: {comNCN}")
+    label2.place(x=10,y=170)
+    label3=Label(root,text=f"Email: {comEM}")
+    label3.place(x=10,y=190)
+    label4=Label(root,text=f"Telephone: {comTL}")
+    label4.place(x=10,y=210)
+
+
+
+table=ttk.Treeview(root,columns=('facture','montant','date','status'),show='headings')
+table.heading('facture',text='Facture')
+table.heading('montant',text='Montant')
+table.heading('date',text='Date')
+table.heading('status',text='Status')
+table.place(x=0,y=300)
+
+#affichage facture numero unique
+i=1
+u=2
+while sheet.cell(row=i, column=1).value != None:
+
+    if sheet.cell(row=u, column=5).value == feuil['B1'].value:
+        table.insert(parent="", index=i, values=(sheet.cell(row=u, column=1).value,
+                                                 sheet.cell(row=u, column=2).value,
+                                                 sheet.cell(row=u, column=3).value,
+                                                 sheet.cell(row=u, column=4).value))
+    i += 1
+    u += 1
+root.mainloop()
