@@ -1,0 +1,122 @@
+from tkinter import *
+import subprocess
+import os
+from PIL import ImageTk,Image
+#import pandas as pd
+import openpyxl
+from openpyxl import workbook , load_workbook
+import subprocess
+
+comFName = None
+NCN = None
+comNCN = None
+FName = None
+comEM = None
+EM = None
+comTL = None
+TL = None
+
+
+def main():
+
+
+    root=Tk()
+    root.title("Informations Personnelles")
+
+
+    #LOGO
+    LABEL=Label(root,text="REGIE AUTONOME INTERCOMMUNALE\n DE DISTRIBUTION D'EAU ET D'ELECTRICITE DE FES\n\n\n\n",fg="blue")
+    pai=Label(root,text="\n\n\n\n[Service de paiement en ligne]\n\nIDENTIFIANTS DU CLIENT:\n\n")
+    logo=ImageTk.PhotoImage(Image.open('RD\RADEEF2.jpg')) 
+    myLabel=Label(image=logo)
+    myLabel.grid(row=0,column=1)
+    LABEL.config(font=("Courier", 12))
+    LABEL.place(x=20,y=50)
+    pai.grid(row=1,column=0)
+
+
+    #FULL NAME
+    FullName=Label(root,text="Entez votre nom complet:")
+    FullName.grid(row=2,column=0)
+
+    FN=Entry(root,width=70)
+    FN.grid(row=3,column=0)
+
+    #NUMERO CONTRAT
+    NumCont=Label(root,text="Entez votre numero de contrat:")
+    NumCont.grid(row=5,column=0)
+
+    NC=Entry(root,width=70)
+    NC.grid(row=6,column=0)
+
+    #EMAIL
+    Emaill=Label(root,text="Entez votre email:")
+    Emaill.grid(row=8,column=0)
+
+    email=Entry(root,width=70)
+    email.grid(row=9,column=0)
+
+    #TEL
+    telep=Label(root,text="Entez votre numero de telephone:")
+    telep.grid(row=11,column=0)
+
+    tel=Entry(root,width=70)
+    tel.grid(row=12,column=0)
+
+    #BUTTON
+
+    # Get the button to work
+    def event():
+        # Read the Excel file
+        info = load_workbook('RD\PEsonInfo.xlsx')
+        Feuil=info.worksheets[0]   #first sheet'index == 0
+        
+    # Get the values from Excel and strip whitespace
+        FName = str(Feuil['A1'].value).strip()
+        NCN = str(Feuil['B1'].value).strip()
+        EM = str(Feuil['C1'].value).strip()
+        TL = str(Feuil['D1'].value).strip()
+        
+        # Get the values from entries and strip whitespace
+        comFName = str(FN.get()).strip()
+        comNCN = str(NC.get()).strip()  # Get the text from the Entry widget 
+        comEM = str(email.get()).strip()
+        comTL = str(tel.get()).strip()
+
+        print(f"FName: {FName}, comFName: {comFName}")
+        print(f"NCN: {NCN}, comNCN: {comNCN}")
+        print(f"EM: {EM}, comEM: {comEM}")
+        print(f"TL: {TL}, comTL: {comTL}")
+
+        # Check if entries match Excel data (the none working part)
+        if (comNCN == NCN):
+            subprocess.run(["python", "RD/Factureinterface.py",FName])
+            subprocess.run(["python", "RD/Factureinterface.py",comFName])
+            subprocess.run(["python", "RD/Factureinterface.py",NCN])
+            subprocess.run(["python", "RD/Factureinterface.py",comNCN])
+            subprocess.run(["python", "RD/Factureinterface.py",EM])
+            subprocess.run(["python", "RD/Factureinterface.py",comEM])
+            subprocess.run(["python", "RD/Factureinterface.py",TL])
+            subprocess.run(["python", "RD/Factureinterface.py",comTL])
+
+            subprocess.run(["python", "RD/Factureinterface.py"])
+
+            
+        else:
+            mes=Label(root,text="Informations invalides, veuillez ressayer!", fg="red")
+            mes.grid(row=14,column=0)
+            
+        
+    bouton=Button(root,text="valider",command=event)
+    bouton.grid(row=13,column=0)
+
+
+
+    root.mainloop()
+
+    
+    return comNCN , NCN , comFName , FName , comEM , EM , comTL , TL
+
+
+if __name__ == "__main__":
+    main()
